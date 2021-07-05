@@ -29,10 +29,7 @@ namespace SteamGuard
 
 		public static void Verbose(string format, params object[] arg)
 		{
-			if (Program.Verbose)
-			{
-				Console.WriteLine(format, arg);
-			}
+			
 		}
 	}
 }

@@ -4,9 +4,9 @@ namespace SteamGuard.Controllers
 {
     public class AddController : ControllerBase<AddOptions>
     {
-        public override void Execute(AddOptions message)
+        public override void Execute(AddOptions options)
         {
-            System.Console.WriteLine(GetType().Name);
+            throw new System.NotImplementedException();
         }
     }
 }

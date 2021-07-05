@@ -4,9 +4,9 @@ namespace SteamGuard.Controllers
 {
     public class EncryptController : ControllerBase<EncryptOptions>
     {
-        public override void Execute(EncryptOptions message)
+        public override void Execute(EncryptOptions options)
         {
-            System.Console.WriteLine(GetType().Name);
+            throw new System.NotImplementedException();
         }
     }
 }

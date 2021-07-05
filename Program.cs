@@ -1,27 +1,37 @@
-﻿using SteamAuth;
+﻿using CommandLine;
+using SteamAuth;
+using SteamGuard.Extensions;
+using SteamGuard.Options;
 using SteamGuard.Providers;
 using System;
-using System.Linq;
+using System.IO;
 
 namespace SteamGuard
 {
     class Program
     {
-        public const string defaultSteamGuardPath = "~/maFiles";
+        public static string DefaultSteamGuardPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "maFiles");
 
-        public static string SteamGuardPath { get; set; } = defaultSteamGuardPath;
+        public static string SteamGuardPath { get; set; } = DefaultSteamGuardPath;
         public static Manifest Manifest { get; set; }
-        public static SteamGuardAccount[] SteamGuardAccounts { get; set; }
-        public static bool Verbose { get; set; } = false;
+        public static SteamGuardAccount[] SteamAccounts { get; set; }
 
         static void Main(string[] args)
         {
-            args = "".Split(' ');
+            //const string overridedArgs = "2fa";
+            //args = overridedArgs.Split(' ');
 
-            Console.WriteLine(string.Join("\n", ControllersProvider.Types.Select(t => t.FullName)));
-            Console.WriteLine(string.Join("\n", OptionsProvider.Types.Select(t => t.FullName)));
+            Parser.Default.ParseArguments(args, OptionsProvider.Types).WithParsed(parsed =>
+            {
+                var options = (DefaultOptions)(IOptions)parsed;
+                if (options.MaFilesPath != null)
+                    SteamGuardPath = options.MaFilesPath;
 
-            //var parsed = Parser.Default.ParseArguments(args, filtered);
+                Manifest = Manifest.GetManifest(true);
+                SteamAccounts = Manifest.GetAllAccounts(options.PassKey);
+
+                options.GetController().Execute(options);
+            });
         }
     }
 }

@@ -1,11 +1,10 @@
-﻿using SteamAuth;
+﻿using Newtonsoft.Json;
+using SteamAuth;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace SteamGuard
 {
@@ -16,28 +15,28 @@ namespace SteamGuard
         private const int KEY_SIZE_BYTES = 32;
         private const int IV_LENGTH = 16;
 
-        [JsonPropertyName("encrypted")]
+        [JsonProperty("encrypted")]
         public bool Encrypted { get; set; }
 
-        [JsonPropertyName("first_run")]
+        [JsonProperty("first_run")]
         public bool FirstRun { get; set; } = true;
 
-        [JsonPropertyName("entries")]
+        [JsonProperty("entries")]
         public List<ManifestEntry> Entries { get; set; }
 
-        [JsonPropertyName("periodic_checking")]
+        [JsonProperty("periodic_checking")]
         public bool PeriodicChecking { get; set; } = false;
 
-        [JsonPropertyName("periodic_checking_interval")]
+        [JsonProperty("periodic_checking_interval")]
         public int PeriodicCheckingInterval { get; set; } = 5;
 
-        [JsonPropertyName("periodic_checking_checkall")]
+        [JsonProperty("periodic_checking_checkall")]
         public bool CheckAllAccounts { get; set; } = false;
 
-        [JsonPropertyName("auto_confirm_market_transactions")]
+        [JsonProperty("auto_confirm_market_transactions")]
         public bool AutoConfirmMarketTransactions { get; set; } = false;
 
-        [JsonPropertyName("auto_confirm_trades")]
+        [JsonProperty("auto_confirm_trades")]
         public bool AutoConfirmTrades { get; set; } = false;
 
         private static Manifest _manifest { get; set; }
@@ -65,7 +64,7 @@ namespace SteamGuard
             {
                 Utils.Verbose("warn: No manifest file found at {0}", maFile);
                 bool? createNewManifest = Program.SteamGuardPath ==
-                                          Program.defaultSteamGuardPath.Replace("~", Environment.GetEnvironmentVariable("HOME")) ? true : (bool?)null;
+                                          Program.DefaultSteamGuardPath.Replace("~", Environment.GetEnvironmentVariable("HOME")) ? true : (bool?)null;
                 while (createNewManifest == null)
                 {
                     Console.Write($"Generate new manifest.json in {Program.SteamGuardPath}? [Y/n]");
@@ -84,7 +83,7 @@ namespace SteamGuard
             try
             {
                 string manifestContents = File.ReadAllText(maFile);
-                _manifest = JsonSerializer.Deserialize<Manifest>(manifestContents);
+                _manifest = JsonConvert.DeserializeObject<Manifest>(manifestContents);
 
                 if (_manifest.Encrypted && _manifest.Entries.Count == 0)
                 {
@@ -133,7 +132,7 @@ namespace SteamGuard
                         string contents = File.ReadAllText(file.FullName);
                         try
                         {
-                            SteamGuardAccount account = JsonSerializer.Deserialize<SteamGuardAccount>(contents);
+                            SteamGuardAccount account = JsonConvert.DeserializeObject<SteamGuardAccount>(contents);
                             ManifestEntry newEntry = new ManifestEntry()
                             {
                                 Filename = file.Name,
@@ -279,7 +278,7 @@ namespace SteamGuard
             }
             stream.Close();
 
-            return JsonSerializer.Deserialize<SteamGuardAccount>(fileText);
+            return JsonConvert.DeserializeObject<SteamGuardAccount>(fileText);
         }
 
         public bool VerifyPasskey(string passkey)
@@ -323,7 +322,7 @@ namespace SteamGuard
         {
             if (encrypt && (String.IsNullOrEmpty(passKey) || String.IsNullOrEmpty(salt) || String.IsNullOrEmpty(iV))) return false;
 
-            string jsonAccount = JsonSerializer.Serialize(account);
+            string jsonAccount = JsonConvert.SerializeObject(account);
 
             string filename = account.Session.SteamID.ToString() + ".maFile";
             Utils.Verbose($"Saving account {account.AccountName} to {filename}...");
@@ -431,7 +430,7 @@ namespace SteamGuard
 
             try
             {
-                string contents = JsonSerializer.Serialize(this);
+                string contents = JsonConvert.SerializeObject(this);
                 File.WriteAllText(filename, contents);
                 return true;
             }
@@ -475,16 +474,16 @@ namespace SteamGuard
 
         public class ManifestEntry
         {
-            [JsonPropertyName("encryption_iv")]
+            [JsonProperty("encryption_iv")]
             public string IV { get; set; }
 
-            [JsonPropertyName("encryption_salt")]
+            [JsonProperty("encryption_salt")]
             public string Salt { get; set; }
 
-            [JsonPropertyName("filename")]
+            [JsonProperty("filename")]
             public string Filename { get; set; }
 
-            [JsonPropertyName("steamid")]
+            [JsonProperty("steamid")]
             public ulong SteamID { get; set; }
         }
 

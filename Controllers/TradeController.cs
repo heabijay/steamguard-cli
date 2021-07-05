@@ -4,9 +4,9 @@ namespace SteamGuard.Controllers
 {
     public class TradeController : ControllerBase<TradeOptions>
     {
-        public override void Execute(TradeOptions message)
+        public override void Execute(TradeOptions options)
         {
-            System.Console.WriteLine(GetType().Name);
+            throw new System.NotImplementedException();
         }
     }
 }
