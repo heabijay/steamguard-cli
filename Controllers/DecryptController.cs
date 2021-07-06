@@ -6,7 +6,24 @@ namespace SteamGuard.Controllers
     {
         public override void Execute(DecryptOptions options)
         {
-            throw new System.NotImplementedException();
-        }
+			if (!Program.Manifest.Encrypted)
+			{
+				System.Console.WriteLine("Decryption not required.");
+				return;
+			}
+
+			foreach (var acc in Program.SteamAccounts)
+            {
+				var success = Program.Manifest.SaveAccount(acc, false);
+
+				if (!success)
+                {
+					System.Console.WriteLine("Unsuccess :(");
+					return;
+				}
+			}
+
+			System.Console.WriteLine("Success!");
+		}
     }
 }

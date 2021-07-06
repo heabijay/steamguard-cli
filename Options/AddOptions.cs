@@ -7,7 +7,7 @@ namespace SteamGuard.Options
         aliases: new string[] { "setup" },
         HelpText = "Set up Steam Guard for 2 factor authentication."
         )]
-    public class AddOptions : DefaultOptions
+    public class AddOptions : DefaultUserOptions
     {
     }
 }

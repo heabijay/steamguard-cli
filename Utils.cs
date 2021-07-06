@@ -7,19 +7,26 @@ namespace SteamGuard
 	{
 		public static string ReadLineSecure()
 		{
-			// Have bash handle the password input, because apparently it's impossible in C#,
-			// and we don't need to worry about windows compatibility.
-			string bash_cmd = @"read -s -p ""Password: "" password; echo $password";
-			Process p = new Process();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName = "bash";
-			p.StartInfo.Arguments = string.Format("-c '{0}'", bash_cmd);
-			p.StartInfo.RedirectStandardOutput = true;
-			p.Start();
+			var pass = string.Empty;
+			ConsoleKey key;
+			do
+			{
+				var keyInfo = Console.ReadKey(true);
+				key = keyInfo.Key;
 
-			p.WaitForExit();
-			Console.WriteLine();
-			return p.StandardOutput.ReadToEnd().Trim();
+				if (key == ConsoleKey.Backspace && pass.Length > 0)
+				{
+					Console.Write("\b \b");
+					pass = pass[0..^1];
+				}
+				else if (!char.IsControl(keyInfo.KeyChar))
+				{
+					Console.Write("*");
+					pass += keyInfo.KeyChar;
+				}
+			} while (key != ConsoleKey.Enter);
+
+			return pass;
 		}
 
 		public static void Verbose(object obj)

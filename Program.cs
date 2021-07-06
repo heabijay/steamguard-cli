@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using SteamAuth;
+using SteamGuard.Exceptions;
 using SteamGuard.Extensions;
 using SteamGuard.Options;
 using SteamGuard.Providers;
@@ -18,9 +19,6 @@ namespace SteamGuard
 
         static void Main(string[] args)
         {
-            //const string overridedArgs = "2fa";
-            //args = overridedArgs.Split(' ');
-
             Parser.Default.ParseArguments(args, OptionsProvider.Types).WithParsed(parsed =>
             {
                 var options = (DefaultOptions)(IOptions)parsed;
@@ -28,7 +26,18 @@ namespace SteamGuard
                     SteamGuardPath = options.MaFilesPath;
 
                 Manifest = Manifest.GetManifest(true);
-                SteamAccounts = Manifest.GetAllAccounts(options.PassKey);
+
+                if (Manifest.Encrypted)
+                {
+                    if (string.IsNullOrEmpty(options.PassKey))
+                        throw new DecryptPasswordRequiredException();
+
+                    SteamAccounts = Manifest.GetAllAccounts(options.PassKey);
+                }
+                else
+                {
+                    SteamAccounts = Manifest.GetAllAccounts();
+                }
 
                 options.GetController().Execute(options);
             });

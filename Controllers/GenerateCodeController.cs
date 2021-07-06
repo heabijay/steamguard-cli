@@ -9,13 +9,14 @@ namespace SteamGuard.Controllers
     {
         public override void Execute(GenerateCodeOptions options)
         {
+            Console.WriteLine($"Generating Steam Guard codes for {Program.SteamAccounts.Length} accounts.");
 			TimeAligner.AlignTime();
 			if (options.Username == null)
             {
                 int i = 0;
 				foreach (var acc in Program.SteamAccounts)
                 {
-                    Console.WriteLine($"#{++i} {acc.AccountName}: {acc.GenerateSteamGuardCode()}");
+                    Console.WriteLine($"#{++i} | {acc.AccountName}: {acc.GenerateSteamGuardCode()}");
                 }
             } 
 			else
