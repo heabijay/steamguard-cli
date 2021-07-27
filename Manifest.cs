@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using SteamAuth;
+using SteamGuard.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -179,7 +180,7 @@ namespace SteamGuard
             while (!passKeyValid)
             {
                 Console.WriteLine("Please enter encryption password: ");
-                passKey = Utils.ReadLineSecure();
+                passKey = ConsoleHelper.SecureReadLine();
                 if (passKey == "")
                     continue;
                 passKeyValid = this.VerifyPasskey(passKey);
@@ -211,9 +212,9 @@ namespace SteamGuard
             do
             {
                 Console.Write("Enter" + (inAccountSetupProcess ? " " : " new ") + "passkey: ");
-                newPassKey = Utils.ReadLineSecure();
+                newPassKey = ConsoleHelper.SecureReadLine();
                 Console.Write("Confirm" + (inAccountSetupProcess ? " " : " new ") + "passkey: ");
-                confirmPassKey = Utils.ReadLineSecure();
+                confirmPassKey = ConsoleHelper.SecureReadLine();
 
                 if (newPassKey != confirmPassKey)
                 {

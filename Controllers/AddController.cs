@@ -1,4 +1,5 @@
 ﻿using SteamAuth;
+using SteamGuard.Helpers;
 using SteamGuard.Options;
 using System;
 
@@ -14,7 +15,7 @@ namespace SteamGuard.Controllers
 				options.Username = Console.ReadLine();
 			}
 			Console.Write("Password: ");
-			var password = Utils.ReadLineSecure();
+			var password = ConsoleHelper.SecureReadLine();
 
 			UserLogin login = new UserLogin(options.Username, password);
 			LoginResult loginResult;
@@ -67,9 +68,9 @@ namespace SteamGuard.Controllers
 						{
 							Console.WriteLine("Enter your mobile phone number in the following format: +{cC} phoneNumber. EG, +1 123-456-7890");
 							phonenumber = Console.ReadLine();
-							phonenumber = FilterPhoneNumber(phonenumber);
+							phonenumber = PhoneHelper.ExtractPhoneNumber(phonenumber);
 							linker.PhoneNumber = phonenumber;
-						} while (!PhoneNumberOkay(phonenumber));
+						} while (!PhoneHelper.IsPhoneNumberOkay(phonenumber));
 						break;
 					//case AuthenticatorLinker.LinkResult.MustConfirmEmail:
 					//	Console.WriteLine("Check your email. Before continuing, click the link in the email to confirm your phone number. Press enter to continue...");
@@ -166,16 +167,6 @@ namespace SteamGuard.Controllers
 			Program.Manifest.SaveAccount(linker.LinkedAccount, passKey != null, passKey);
 			Console.WriteLine(
 				$"Mobile authenticator successfully linked. Please actually write down your revocation code: {linker.LinkedAccount.RevocationCode}");
-		}
-
-		public static string FilterPhoneNumber(string phoneNumber)
-			=> phoneNumber.Replace("-", "").Replace("(", "").Replace(")", "");
-
-		public static bool PhoneNumberOkay(string phoneNumber)
-		{
-			if (phoneNumber == null || phoneNumber.Length == 0) return false;
-			if (phoneNumber[0] != '+') return false;
-			return true;
 		}
 	}
 }
