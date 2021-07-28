@@ -1,6 +1,6 @@
 # steamguard-cli (fork) [beta]
 
-A cross-platform CLI app for setting up and using Steam Mobile Authenticator. This is fork of [dyc3/steamguard-cli](https://github.com/dyc3/steamguard-cli), rewrited on .NET 5. Works on any plaform using dotnet.
+A cross-platform CLI app for setting up and using Steam Mobile Authenticator. This is fork of [dyc3/steamguard-cli](https://github.com/dyc3/steamguard-cli), refactored and rewrited on .NET 5. Works on any plaform using dotnet.
 
 
 # Disclaimer
@@ -31,6 +31,7 @@ Verbs:
   version                     Display version information.
 
 Options:
+  -c, --copy                  Copies codes to clipboard
   -s, --steam-username        Selected steam username.
   -m, --mafiles-path          Input file to read.
   -p, --pass-key              Specify your encryption passkey.

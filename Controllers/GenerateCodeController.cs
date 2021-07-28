@@ -2,6 +2,9 @@
 using SteamGuard.Extensions;
 using SteamGuard.Options;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using TextCopy;
 
 namespace SteamGuard.Controllers
 {
@@ -9,20 +12,30 @@ namespace SteamGuard.Controllers
     {
         public override void Execute(GenerateCodeOptions options)
         {
-            Console.WriteLine($"Generating Steam Guard codes for {Program.SteamAccounts.Length} accounts.");
+            Console.Write("Aligning time...");
 			TimeAligner.AlignTime();
-			if (options.Username == null)
+            Console.WriteLine(" Success!\n");
+
+            Dictionary<string, string> requestedCodes;
+            if (options.Username != null)
             {
-                int i = 0;
-				foreach (var acc in Program.SteamAccounts)
+                var acc = options.GetAccount();
+
+                requestedCodes = new()
                 {
-                    Console.WriteLine($"#{++i} | {acc.AccountName}: {acc.GenerateSteamGuardCode()}");
-                }
-            } 
-			else
-            {
-                Console.WriteLine(options.GetAccount().GenerateSteamGuardCode());
+                    { acc.AccountName, acc.GenerateSteamGuardCode() }
+                };
             }
-		}
+            else requestedCodes = Program.SteamAccounts.ToDictionary(t => t.AccountName, t => t.GenerateSteamGuardCode());
+
+            Console.WriteLine($"Generated codes ({requestedCodes.Count}): ");
+
+            var usernameMaxLength = requestedCodes?.Keys?.Max(t => t.Length);
+            foreach (var code in requestedCodes)
+                Console.WriteLine("{0,-" + usernameMaxLength + "}: {1}", code.Key, code.Value);
+
+            if (options.IsNeedCopyToClipboard && requestedCodes?.Count > 0)
+                ClipboardService.SetText(string.Join(',', requestedCodes.Select(t => t.Value)));
+        }
     }
 }

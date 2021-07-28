@@ -10,6 +10,7 @@ namespace SteamGuard.Options
         )]
     public class GenerateCodeOptions : DefaultUserOptions
     {
-
+        [Option('c', "copy", HelpText = "Copies codes to clipboard")]
+        public bool IsNeedCopyToClipboard { get; set; }
     }
 }
