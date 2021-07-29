@@ -1,4 +1,5 @@
 ﻿using SteamGuard.Options;
+using System;
 
 namespace SteamGuard.Controllers
 {
@@ -6,24 +7,24 @@ namespace SteamGuard.Controllers
     {
         public override void Execute(DecryptOptions options)
         {
-			if (!Program.Manifest.Encrypted)
-			{
-				System.Console.WriteLine("Decryption not required.");
-				return;
-			}
-
-			foreach (var acc in Program.SteamAccounts)
+            if (!Program.Manifest.Encrypted)
             {
-				var success = Program.Manifest.SaveAccount(acc, false);
+                Console.WriteLine("Decryption not required.");
+                return;
+            }
 
-				if (!success)
+            foreach (var acc in Program.SteamAccounts)
+            {
+                var success = Program.Manifest.SaveAccount(acc, false);
+
+                if (!success)
                 {
-					System.Console.WriteLine("Unsuccess :(");
-					return;
-				}
-			}
+                    Console.WriteLine("Unsuccess :(");
+                    return;
+                }
+            }
 
-			System.Console.WriteLine("Success!");
-		}
+            Console.WriteLine("Success!");
+        }
     }
 }

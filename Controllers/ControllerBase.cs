@@ -3,7 +3,7 @@ using System;
 
 namespace SteamGuard.Controllers
 {
-    public abstract class ControllerBase<T>: IController where T: IOptions
+    public abstract class ControllerBase<T> : IController where T : IOptions
     {
         public virtual void Execute(IOptions options)
         {

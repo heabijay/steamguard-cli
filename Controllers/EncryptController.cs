@@ -1,4 +1,5 @@
 ﻿using SteamGuard.Options;
+using System;
 
 namespace SteamGuard.Controllers
 {
@@ -6,22 +7,22 @@ namespace SteamGuard.Controllers
     {
         public override void Execute(EncryptOptions options)
         {
-			string newKey = Program.Manifest.PromptSetupPassKey();
+            string newKey = Program.Manifest.PromptSetupPassKey();
 
             foreach (var acc in Program.SteamAccounts)
             {
-				var salt = Manifest.GetRandomSalt();
-				var iv = Manifest.GetInitializationVector();
-				bool success = Program.Manifest.SaveAccount(acc, true, newKey, salt, iv);
+                var salt = Manifest.GetRandomSalt();
+                var iv = Manifest.GetInitializationVector();
+                bool isSuccess = Program.Manifest.SaveAccount(acc, true, newKey, salt, iv);
 
-				if (!success)
+                if (!isSuccess)
                 {
-                    System.Console.WriteLine("Unsuccess :(");
+                    Console.WriteLine("Unsuccess :(");
                     return;
                 }
-			}
+            }
 
-            System.Console.WriteLine("Success!");
+            Console.WriteLine("Success!");
         }
     }
 }

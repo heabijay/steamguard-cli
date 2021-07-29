@@ -13,7 +13,7 @@ namespace SteamGuard.Controllers
         public override void Execute(GenerateCodeOptions options)
         {
             Console.Write("Aligning time...");
-			TimeAligner.AlignTime();
+            TimeAligner.AlignTime();
             Console.WriteLine(" Success!\n");
 
             Dictionary<string, string> requestedCodes;
