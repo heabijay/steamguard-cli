@@ -8,18 +8,15 @@ namespace SteamGuard.Controllers
 {
     public class TradeController : ControllerBase<TradeOptions>
     {
+        // TODO: Refactor old code based on fork source.
         public override void Execute(TradeOptions options)
         {
-            if (options.Username == null)
-            {
-                Console.WriteLine("Account doesn't selected!");
-                return;
-            }
-
-            ProcessConfirmationsDialog(options.GetAccount());
+            var account = options.GetAccount();
+            EnsureSessionRefreshed(account);
+            ProcessConfirmationsDialog(account);
         }
 
-        private static bool NeedRefreshSessionDialog(SteamGuardAccount account)
+        private static bool RefreshSessionDialog(SteamGuardAccount account)
         {
             Console.WriteLine("Your Steam credentials have expired. For trade and market confirmations to work properly, please login again.");
             var username = account.AccountName;
@@ -33,10 +30,10 @@ namespace SteamGuard.Controllers
             if (loginResult == LoginResult.Need2FA && !string.IsNullOrEmpty(account.SharedSecret))
             {
                 // if we need a 2fa code, and we can generate it, generate a 2fa code and log in.
-                Utils.Verbose(loginResult);
+                Console.WriteLine(loginResult);
                 TimeAligner.AlignTime();
                 login.TwoFactorCode = account.GenerateSteamGuardCode();
-                Utils.Verbose($"Logging in {username}... ");
+                Console.WriteLine($"Logging in {username}... ");
                 loginResult = login.DoLogin();
             }
             Console.WriteLine(loginResult);
@@ -47,7 +44,7 @@ namespace SteamGuard.Controllers
 
             if (account.RefreshSession())
             {
-                Utils.Verbose("Session refreshed");
+                Console.WriteLine("Session refreshed");
                 Program.Manifest.SaveAccount(account, Program.Manifest.Encrypted);
                 return true;
             }
@@ -57,26 +54,28 @@ namespace SteamGuard.Controllers
             }
         }
 
-        internal static void ProcessConfirmationsDialog(SteamGuardAccount account)
+        public static void EnsureSessionRefreshed(SteamGuardAccount account)
         {
-            Utils.Verbose("Refeshing Session...");
+            Console.WriteLine("Refeshing Session...");
             if (account.RefreshSession())
             {
-                Utils.Verbose("Session refreshed");
+                Console.WriteLine("Session refreshed");
                 Program.Manifest.SaveAccount(account, Program.Manifest.Encrypted);
             }
             else
             {
-                Utils.Verbose("Failed to refresh session, prompting user...");
-                if (!NeedRefreshSessionDialog(account))
+                Console.WriteLine("Failed to refresh session, prompting user...");
+                if (!RefreshSessionDialog(account))
                 {
                     Console.WriteLine("Failed to refresh session, aborting...");
                 }
             }
+        }
+
+        public static void ProcessConfirmationsDialog(SteamGuardAccount account)
+        {   
             Console.WriteLine("Retrieving trade confirmations...");
-            var tradesTask = account.FetchConfirmationsAsync();
-            tradesTask.Wait();
-            var trades = tradesTask.Result;
+            var trades = account.FetchConfirmationsAsync().GetAwaiter().GetResult();
             var tradeActions = new TradeAction[trades.Length];
             for (var i = 0; i < tradeActions.Length; i++)
             {
@@ -184,7 +183,7 @@ namespace SteamGuard.Controllers
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                Utils.Verbose(success);
+                Console.WriteLine(success);
             }
             Console.WriteLine("Done.");
         }

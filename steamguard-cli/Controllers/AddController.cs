@@ -121,10 +121,10 @@ namespace SteamGuard.Controllers
                             linker.PhoneNumber = PhoneHelper.ExtractPhoneNumber(Console.ReadLine());
                         } while (!PhoneHelper.IsPhoneNumberOkay(linker.PhoneNumber));
                         break;
-                    //case AuthenticatorLinker.LinkResult.MustConfirmEmail:
-                    //	Console.WriteLine("Check your email. Before continuing, click the link in the email to confirm your phone number. Press enter to continue...");
-                    //	Console.ReadLine();
-                    //	break;
+                    case LinkResult.MustConfirmEmail:
+                        Console.WriteLine("Check your email. Before continuing, click the link in the email to confirm your phone number. Press enter to continue...");
+                        Console.ReadLine();
+                        break;
                     case LinkResult.AuthenticatorPresent:
                         Console.Write(
                             "An authenticator is already present.\n" +
@@ -152,7 +152,7 @@ namespace SteamGuard.Controllers
 
         public static void ProcessFinalizeDialog(AuthenticatorLinker linker)
         {
-            FinalizeResult finalizeResponse = FinalizeResult.GeneralFailure;
+            var finalizeResponse = FinalizeResult.GeneralFailure;
             do
             {
                 Console.Write("Please input the SMS message sent to your phone number: ");

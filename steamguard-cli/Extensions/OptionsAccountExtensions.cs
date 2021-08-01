@@ -14,7 +14,7 @@ namespace SteamGuard.Extensions
                     )
                 );
 
-            if (acc == null)
+            if (acc == null || string.IsNullOrEmpty(userOptions.Username))
                 throw new AccountNotFoundException(userOptions.Username);
 
             return acc;

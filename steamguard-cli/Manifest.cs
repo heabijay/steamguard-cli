@@ -35,12 +35,12 @@ namespace SteamGuard
         [JsonProperty("auto_confirm_trades")]
         public bool AutoConfirmTrades { get; set; } = false;
 
-        public SteamAuth.SteamGuardAccount[] GetAllAccounts(string passKey = null, int limit = -1)
+        public SteamGuardAccount[] GetAllAccounts(string passKey = null, int limit = -1)
         {
             if (passKey == null && Encrypted) return new SteamGuardAccount[0];
 
             var accounts = new List<SteamGuardAccount>();
-            foreach (var entry in this.Entries)
+            foreach (var entry in Entries)
             {
                 var account = GetAccount(entry, passKey);
                 if (account == null) continue;
@@ -62,7 +62,7 @@ namespace SteamGuard
             Stream stream;
             if (Encrypted)
             {
-                MemoryStream ms = new MemoryStream(Convert.FromBase64String(File.ReadAllText(filename)));
+                var ms = new MemoryStream(Convert.FromBase64String(File.ReadAllText(filename)));
                 byte[] key = CryptographyHelper.GetEncryptionKey(passKey, entry.Salt);
 
                 aes256 = new RijndaelManaged
@@ -94,7 +94,7 @@ namespace SteamGuard
 
         public bool VerifyPasskey(string passkey)
         {
-            if (!this.Encrypted || Entries.Count == 0) return true;
+            if (!Encrypted || Entries.Count == 0) return true;
 
             var accounts = GetAllAccounts(passkey, 1);
             return accounts != null && accounts.Length == 1;
@@ -131,7 +131,7 @@ namespace SteamGuard
 
         public bool SaveAccount(SteamGuardAccount account, bool encrypt, string passKey = null, string salt = null, string iV = null)
         {
-            if (encrypt && (String.IsNullOrEmpty(passKey) || String.IsNullOrEmpty(salt) || String.IsNullOrEmpty(iV))) return false;
+            if (encrypt && (string.IsNullOrEmpty(passKey) || string.IsNullOrEmpty(salt) || string.IsNullOrEmpty(iV))) return false;
 
             string jsonAccount = JsonConvert.SerializeObject(account);
 
@@ -158,16 +158,14 @@ namespace SteamGuard
             }
 
             if (!foundExistingEntry)
-            {
-                this.Entries.Add(newEntry);
-            }
+                Entries.Add(newEntry);
 
-            bool wasEncrypted = this.Encrypted;
+            bool wasEncrypted = Encrypted;
             Encrypted = encrypt;
 
-            if (!this.Save())
+            if (!Save())
             {
-                this.Encrypted = wasEncrypted;
+                Encrypted = wasEncrypted;
                 return false;
             }
 
@@ -229,12 +227,12 @@ namespace SteamGuard
             {
                 try
                 {
-                    Utils.Verbose("Creating {0}", Program.SteamGuardPath);
+                    Console.WriteLine("Creating {0}", Program.SteamGuardPath);
                     Directory.CreateDirectory(Program.SteamGuardPath);
                 }
                 catch (Exception ex)
                 {
-                    Utils.Verbose($"error: {ex.Message}");
+                    Console.WriteLine($"error: {ex.Message}");
                     return false;
                 }
             }

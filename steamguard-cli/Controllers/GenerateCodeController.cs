@@ -14,7 +14,7 @@ namespace SteamGuard.Controllers
         {
             Console.Write("Aligning time...");
             TimeAligner.AlignTime();
-            Console.WriteLine(" Success!\n");
+            Console.WriteLine(" Success!");
 
             Dictionary<string, string> requestedCodes;
             if (options.Username != null)

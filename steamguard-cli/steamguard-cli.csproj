@@ -14,8 +14,11 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="SteamAuth" Version="3.0.0" />
     <PackageReference Include="TextCopy" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SteamAuth\SteamAuth\SteamAuth.csproj" />
   </ItemGroup>
 
 </Project>

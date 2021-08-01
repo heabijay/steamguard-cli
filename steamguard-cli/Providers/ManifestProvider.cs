@@ -108,7 +108,7 @@ namespace SteamGuard.Providers
 
                 _manifest.RecomputeExistingEntries();
 
-                Console.WriteLine($"{_manifest.Entries.Count} accounts loaded");
+                Console.WriteLine($"{_manifest.Entries.Count} accounts loaded.");
                 return _manifest;
             }
             catch (Exception ex)
