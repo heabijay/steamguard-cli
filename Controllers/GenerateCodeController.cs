@@ -26,7 +26,7 @@ namespace SteamGuard.Controllers
                     { acc.AccountName, acc.GenerateSteamGuardCode() }
                 };
             }
-            else requestedCodes = Program.SteamAccounts.ToDictionary(t => t.AccountName, t => t.GenerateSteamGuardCode());
+            else requestedCodes = Program.Accounts.ToDictionary(t => t.AccountName, t => t.GenerateSteamGuardCode());
 
             Console.WriteLine($"Generated codes ({requestedCodes.Count}): ");
 

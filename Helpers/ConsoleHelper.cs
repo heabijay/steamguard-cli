@@ -24,6 +24,7 @@ namespace SteamGuard.Helpers
                     pass += keyInfo.KeyChar;
                 }
             } while (key != ConsoleKey.Enter);
+            Console.WriteLine();
 
             return pass;
         }

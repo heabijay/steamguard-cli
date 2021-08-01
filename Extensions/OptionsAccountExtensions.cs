@@ -9,7 +9,7 @@ namespace SteamGuard.Extensions
     {
         public static SteamGuardAccount GetAccount(this DefaultUserOptions userOptions)
         {
-            var acc = Program.SteamAccounts.FirstOrDefault(
+            var acc = Program.Accounts.FirstOrDefault(
                 t => t.AccountName.Equals(userOptions.Username, System.StringComparison.OrdinalIgnoreCase
                     )
                 );

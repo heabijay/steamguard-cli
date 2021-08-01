@@ -13,7 +13,7 @@ namespace SteamGuard.Controllers
                 return;
             }
 
-            foreach (var acc in Program.SteamAccounts)
+            foreach (var acc in Program.Accounts)
             {
                 var success = Program.Manifest.SaveAccount(acc, false);
 

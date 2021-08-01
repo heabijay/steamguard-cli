@@ -1,4 +1,5 @@
 ﻿using SteamAuth;
+using SteamGuard.Enums;
 using SteamGuard.Extensions;
 using SteamGuard.Options;
 using System;
@@ -15,17 +16,10 @@ namespace SteamGuard.Controllers
                 return;
             }
 
-            ProcessConfirmations(options.GetAccount());
+            ProcessConfirmationsDialog(options.GetAccount());
         }
 
-        private enum TradeAction
-        {
-            Accept = 1,
-            Deny = 0,
-            Ignore = -1
-        }
-
-        private bool PromptRefreshSession(SteamGuardAccount account)
+        private static bool NeedRefreshSessionDialog(SteamGuardAccount account)
         {
             Console.WriteLine("Your Steam credentials have expired. For trade and market confirmations to work properly, please login again.");
             var username = account.AccountName;
@@ -63,7 +57,7 @@ namespace SteamGuard.Controllers
             }
         }
 
-        private void ProcessConfirmations(SteamGuardAccount account)
+        internal static void ProcessConfirmationsDialog(SteamGuardAccount account)
         {
             Utils.Verbose("Refeshing Session...");
             if (account.RefreshSession())
@@ -74,7 +68,7 @@ namespace SteamGuard.Controllers
             else
             {
                 Utils.Verbose("Failed to refresh session, prompting user...");
-                if (!PromptRefreshSession(account))
+                if (!NeedRefreshSessionDialog(account))
                 {
                     Console.WriteLine("Failed to refresh session, aborting...");
                 }

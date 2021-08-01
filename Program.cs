@@ -13,9 +13,9 @@ namespace SteamGuard
     {
         public static string DefaultSteamGuardPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "maFiles");
 
-        public static string SteamGuardPath { get; set; } = DefaultSteamGuardPath;
-        public static Manifest Manifest { get; set; }
-        public static SteamGuardAccount[] SteamAccounts { get; set; }
+        public static string SteamGuardPath { get; private set; } = DefaultSteamGuardPath;
+        public static Manifest Manifest { get; private set; }
+        public static SteamGuardAccount[] Accounts { get; private set; }
 
         static void Main(string[] args)
         {
@@ -25,18 +25,18 @@ namespace SteamGuard
                 if (options.MaFilesPath != null)
                     SteamGuardPath = options.MaFilesPath;
 
-                Manifest = Manifest.GetManifest(true);
+                Manifest = ManifestProvider.GetManifest(true);
 
                 if (Manifest.Encrypted)
                 {
                     if (string.IsNullOrEmpty(options.PassKey))
                         throw new DecryptPasswordRequiredException();
 
-                    SteamAccounts = Manifest.GetAllAccounts(options.PassKey);
+                    Accounts = Manifest.GetAllAccounts(options.PassKey);
                 }
                 else
                 {
-                    SteamAccounts = Manifest.GetAllAccounts();
+                    Accounts = Manifest.GetAllAccounts();
                 }
 
                 options.GetController().Execute(options);
